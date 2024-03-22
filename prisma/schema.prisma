@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId    Int      @id @default(autoincrement())
+  userEmail String   @unique
+  name      String
+  profile   Profile?
+}
+
+model Profile {
+  profileID    Int    @id @default(autoincrement())
+  profileEmail String @unique
+  userEmail    User   @relation(fields: [profileEmail], references: [userEmail])
+  phone        String
+  gender       Gender
+  address      String
+  Cart         Cart[]
+}
+
+model Cart {
+  cartID     Int          @id @default(autoincrement())
+  cartOwner  Profile      @relation(fields: [cartID], references: [profileID])
+  itemDetail ItemDetail[]
+}
+
+model KategoriList {
+  // The primary key of the category, a unique cuid string
+  id        String     @id @unique @default(cuid())
+  // The name of the category, unique
+  name      String     @unique
+  // The route path to access the category, e.g. /category/food
+  routeName String
+  // The list of items under this category
+  ItemList  ItemList[]
+}
+
+// This model represents a list of items
+// The item name, price, sold and rating are required
+// The storeLocation and storeName are the location and name of the store selling the item
+// The image is the image URL of the item
+// The itemCategory is the name of the category that the item belongs to
+// The category field is a relation to the KategoriList model, it's used to link to the category
+// The ItemDetail is the detailed information of the item, it's a one-to-one relation
+model ItemList {
+  // The primary key of the item, a unique cuid string
+  id            String       @id @unique @default(cuid())
+  // The name of the item
+  name          String
+  // The price of the item, integer
+  price         Int
+  // The number of items sold
+  sold          Int
+  // The rating of the item, integer
+  rating        Int
+  // The location of the store selling the item
+  storeLocation String
+  // The name of the store selling the item
+  storeName     String
+  // The image URL of the item
+  image         String
+  // The name of the category that the item belongs to
+  itemCategory  String
+  // The category field is a relation to the KategoriList model
+  category      KategoriList @relation(fields: [itemCategory], references: [name])
+  // The ItemDetail is the detailed information of the item, it's a one-to-one relation
+  ItemDetail    ItemDetail?
+}
+
+// This model represents the detailed information of an item
+// The item name, description, price, sold and rating are required
+// The storeLocation and storeName are the location and name of the store selling the item
+// The image is the image URL of the item
+// The itemCategory is the name of the category that the item belongs to
+// The itemListID is the ID of the item in the ItemList model
+// The ItemComment is the list of comments of this item
+model ItemDetail {
+  // The primary key of the item detail, a unique cuid string
+  id            String       @id @unique @default(cuid())
+  // The name of the item
+  name          String
+  // The description of the item
+  description   String
+  // The price of the item, integer
+  price         Int
+  // The number of items sold
+  sold          Int
+  // The rating of the item, integer
+  rating        Int
+  // The location of the store selling the item
+  storeLocation String
+  // The name of the store selling the item
+  storeName     String
+  // The image URL of the item
+  image         String
+  // The name of the category that the item belongs to
+  itemCategory  String
+  // The ID of the item in the ItemList model
+  itemListID    ItemList     @relation(fields: [id], references: [id])
+  // The list of comments of this item
+  ItemComment   ItemComment?
+  cartID        Int?
+  Cart          Cart?        @relation(fields: [cartID], references: [cartID])
+}
+
+// This model represents a comment of an item
+// The username of the commenter, the comment itself and the rating are required
+// The itemDetailID is the ID of the item in the ItemDetail model
+model ItemComment {
+  // The primary key of the comment, a unique cuid string
+  id           String     @id @unique @default(cuid())
+  // The username of the commenter
+  username     String
+  // The comment content
+  comment      String
+  // The rating of the comment, integer
+  rating       Int
+  // The ID of the item detail in the ItemDetail model
+  itemDetailID ItemDetail @relation(fields: [id], references: [id])
+}

@@ -1,10 +1,25 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 
-// run app with nodemon . instead of node .
-app.get("/", (req, res) => {
-	res.send("Hello World!");
+app.get("/", async (req, res) => {
+	const users = await prisma.user.findMany();
+	res.send(users);
+});
+
+app.post("/add", async (req, res) => {
+	const { name, email } = req.body;
+	const user = await prisma.user.create({
+		data: {
+			name,
+			userEmail: email,
+		},
+	});
+	res.send(user);
 });
 
 app.listen(port, () => {
