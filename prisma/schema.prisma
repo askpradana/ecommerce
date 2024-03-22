@@ -22,11 +22,13 @@ model User {
   userId    Int      @id @default(autoincrement())
   userEmail String   @unique
   name      String
+  password  String
   profile   Profile?
 }
 
 model Profile {
-  profileID    Int    @id @default(autoincrement())
+  // change to cuid in the future
+  profileID    Int    @id
   profileEmail String @unique
   userEmail    User   @relation(fields: [profileEmail], references: [userEmail])
   phone        String
