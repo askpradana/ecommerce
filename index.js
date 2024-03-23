@@ -1,43 +1,11 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
-
-const prisma = new PrismaClient();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
+var authRoute = require("./route/auth");
 
-app.post("/login", async function (req, res) {
-	const email = req.body.email;
-	const hashedPassword = await bcrypt.hash(req.body.password, 10);
-	const user = await prisma.user.findUnique({
-		where: {
-			userEmail: email,
-		},
-	});
-	const userPassword = user.password;
-	const result = bcrypt.compareSync(req.body.password, userPassword);
-	console.log(result);
-	if (user) {
-		res.send(user);
-	} else {
-		res.status(401).send(hashedPassword);
-	}
-});
-
-app.post("/register", async (req, res) => {
-	const { name, email, password } = req.body;
-	const hashedPassword = await bcrypt.hash(password, 10);
-	const user = await prisma.user.create({
-		data: {
-			name,
-			userEmail: email,
-			password: hashedPassword,
-		},
-	});
-	res.send(user);
-});
+app.use("/auth", authRoute);
 
 app.post("/profile", async (req, res) => {
 	const id = req.body.id;
