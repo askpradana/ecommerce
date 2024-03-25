@@ -13,7 +13,9 @@
     "@prisma/client": "^5.11.0",
     "bcrypt": "^5.1.1",
     "express": "^4.19.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "prisma": "^5.11.0"

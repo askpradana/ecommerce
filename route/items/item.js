@@ -1,3 +1,54 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Items
+ *   description: Item list management API
+ * /items:
+ *   get:
+ *     summary: List all available items
+ *     tags: [Items]
+ *     responses:
+ *       200:
+ *         description: The item list
+ *       500:
+ *         description: Some server error
+ *
+ * /items/add:
+ *   post:
+ *      summary: Add an item
+ *      tags: [Items]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                name:
+ *                  type: string
+ *                  description: The name of the item
+ *                category:
+ *                  type: string
+ *                  description: The category of the item
+ *                image:
+ *                  type: string
+ *                  description: The image of the item
+ *                price:
+ *                  type: number
+ *                  description: The price of the item
+ *                storeLocation:
+ *                  type: string
+ *                  description: The store location of the item
+ *                storeName:
+ *                  type: string
+ *                  description: The store name of the item
+ *      responses:
+ *        201:
+ *          description: The item was added
+ *        500:
+ *          description: Some server error
+ *
+ */
 var express = require("express");
 var router = express.Router();
 const { PrismaClient } = require("@prisma/client");
