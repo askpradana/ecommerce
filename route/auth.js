@@ -15,20 +15,20 @@ async function CheckUserProfile(params) {
 }
 
 router.post("/login", async function (req, res) {
-	const email = req.body.email;
+	const { email, password } = req.body;
 	const user = await prisma.user.findUnique({
 		where: {
 			userEmail: email,
 		},
 	});
 	const userPassword = user.password;
-	const result = bcrypt.compareSync(req.body.password, userPassword);
+	const result = bcrypt.compareSync(password, userPassword);
 	if (result) {
 		const profileComplete = await CheckUserProfile(email);
 		if (profileComplete) {
-			res.send("complete");
+			res.send({ message: "redirect to home" });
 		} else {
-			res.send("not complete");
+			res.send({ message: "redirect to fill profile" });
 		}
 	} else {
 		res.status(401).send({ message: "Invalid email or password" });
@@ -44,8 +44,12 @@ router.post("/register", async (req, res) => {
 			userEmail: email,
 			password: hashedPassword,
 		},
+		select: {
+			name: true,
+			userEmail: true,
+		},
 	});
-	res.send(user);
+	res.status(201).send({ message: "successfully registered", data: user });
 });
 
 module.exports = router;
