@@ -1,3 +1,54 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Settings
+ *   description: API for settings
+ * /settings:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [Settings]
+ *     responses:
+ *       200:
+ *         description: Login success
+ *       500:
+ *         description: Some server error
+ *
+ *
+ *
+ * /settings/profile/add:
+ *   post:
+ *      summary: Add new profile users
+ *      tags: [Settings]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: string
+ *                  description: User id
+ *                address:
+ *                  type: string
+ *                  description: User address
+ *                gender:
+ *                  type: string
+ *                  description: MALE or FEMALE only
+ *                phone:
+ *                  type: string
+ *                  description: User phone
+ *                email:
+ *                  type: string
+ *                  description: User email
+ *      responses:
+ *        201:
+ *          description: Success added users profile
+ *        500:
+ *          description: Some server error
+ *
+ */
+
 var express = require("express");
 var router = express.Router();
 const { PrismaClient } = require("@prisma/client");

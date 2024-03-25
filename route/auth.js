@@ -1,3 +1,61 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Auth management API
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User email
+ *               password:
+ *                 type: string
+ *                 description: User password
+ *     responses:
+ *       200:
+ *         description: Login success
+ *       500:
+ *         description: Some server error
+ *
+ *
+ *
+ * /auth/register:
+ *   post:
+ *      summary: Register new user
+ *      tags: [Auth]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                name:
+ *                  type: string
+ *                  description: User name
+ *                email:
+ *                  type: string
+ *                  description: User email
+ *                password:
+ *                  type: string
+ *                  description: User password
+ *
+ *      responses:
+ *        201:
+ *          description: The category was added
+ *        500:
+ *          description: Some server error
+ *
+ */
 var express = require("express");
 var router = express.Router();
 const { PrismaClient } = require("@prisma/client");
