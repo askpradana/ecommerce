@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 var authRoute = require("./route/auth");
@@ -37,7 +37,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "http://localhost:3000",
+				url: "http://localhost:8080",
 			},
 		],
 	},
