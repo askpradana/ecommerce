@@ -51,25 +51,41 @@
 
 var express = require("express");
 var router = express.Router();
+const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
 router.post("/profile", async (req, res) => {
-	const id = req.body.id;
-	const user = await prisma.profile.findUnique({
+	const { email } = req.body;
+	const token = req.headers.authorization;
+
+	if (!token || !email) return res.send({ message: "param invalid" });
+
+	const tokenIsValid = await prisma.user.findUnique({
 		where: {
-			profileID: id,
+			userEmail: email,
+		},
+		select: {
+			token: true,
 		},
 	});
-	if (user) {
-		res.send(user);
-	} else {
-		// in the future, change user id to cuid instead of autoincrement
-		res.send({
-			message: "Profile not found, redirect to fill the profile form",
-		});
-	}
+
+	if (!tokenIsValid) return res.send({ message: "token invalid" });
+
+	const tokenIsCorrect = bcrypt.compare(tokenIsValid.token, token);
+
+	if (!tokenIsCorrect) return res.send({ message: "incorrect token" });
+
+	const checkProfile = await prisma.profile.findUnique({
+		where: {
+			profileEmail: email,
+		},
+	});
+
+	if (!checkProfile) return res.send({ message: "profile not available" });
+
+	return res.send({ message: "to homepage" });
 });
 
 router.post("/profile/add", async (req, res) => {
