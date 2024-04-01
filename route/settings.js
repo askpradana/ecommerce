@@ -56,11 +56,10 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-router.post("/profile", async (req, res) => {
-	const { email } = req.body;
-	const token = req.headers.authorization;
+async function tokenChcker(params) {
+	const { email, token } = params;
 
-	if (!token || !email) return res.send({ message: "param invalid" });
+	if (!token || !email) return "param invalid";
 
 	const tokenIsValid = await prisma.user.findUnique({
 		where: {
@@ -71,11 +70,23 @@ router.post("/profile", async (req, res) => {
 		},
 	});
 
-	if (!tokenIsValid) return res.send({ message: "token invalid" });
+	if (!tokenIsValid) return "token invalid";
 
-	const tokenIsCorrect = bcrypt.compare(tokenIsValid.token, token);
+	const tokenIsCorrect = bcrypt.compareSync(token, tokenIsValid.token);
 
-	if (!tokenIsCorrect) return res.send({ message: "incorrect token" });
+	if (!tokenIsCorrect) return "incorrect token";
+
+	return "next";
+}
+
+router.post("/profile", async (req, res) => {
+	const { email } = req.body;
+	const token = req.headers.authorization;
+
+	const checkToken = await tokenChcker({ email, token });
+
+	if (checkToken !== "next")
+		return res.status(401).send({ message: checkToken });
 
 	const checkProfile = await prisma.profile.findUnique({
 		where: {
@@ -90,6 +101,13 @@ router.post("/profile", async (req, res) => {
 
 router.post("/profile/add", async (req, res) => {
 	const { id, address, gender, phone, email } = req.body;
+	const token = req.headers.authorization;
+
+	const checkToken = await tokenChcker({ email, token });
+
+	if (checkToken !== "next")
+		return res.status(401).send({ message: checkToken });
+
 	if (gender !== "MALE" && gender !== "FEMALE") {
 		res.send({ message: "Invalid gender: " + gender });
 		return;
