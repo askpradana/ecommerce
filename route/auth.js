@@ -60,6 +60,7 @@ var express = require("express");
 var router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
+const { generateAccessToken } = require("../config/token");
 
 const prisma = new PrismaClient();
 
@@ -72,6 +73,26 @@ async function CheckUserProfile(params) {
 	return profileComplete;
 }
 
+async function UpdateUserToken(params) {
+	const hashedToken = await bcrypt.hash(params.token, 10);
+
+	try {
+		await prisma.user.update({
+			where: {
+				userEmail: params.email,
+			},
+			data: {
+				token: hashedToken,
+			},
+		});
+	} catch {
+		res
+			.status(500)
+			.send({ message: "Something went wrong when updating the token" });
+		return;
+	}
+}
+
 router.post("/login", async function (req, res) {
 	const { email, password } = req.body;
 	const user = await prisma.user.findUnique({
@@ -80,13 +101,19 @@ router.post("/login", async function (req, res) {
 		},
 	});
 	const userPassword = user.password;
-	const result = bcrypt.compareSync(password, userPassword);
-	if (result) {
+	const correctPassword = bcrypt.compareSync(password, userPassword);
+	if (correctPassword) {
+		const token = generateAccessToken({
+			email,
+		});
+
+		UpdateUserToken({ email, token });
+
 		const profileComplete = await CheckUserProfile(email);
 		if (profileComplete) {
-			res.send({ message: "redirect to home" });
+			res.send({ message: "redirect to home", token });
 		} else {
-			res.send({ message: "redirect to fill profile" });
+			res.send({ message: "redirect to fill profile", token });
 		}
 	} else {
 		res.status(401).send({ message: "Invalid email or password" });

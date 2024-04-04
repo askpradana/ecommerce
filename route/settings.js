@@ -56,37 +56,37 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-async function tokenChcker(params) {
-	const { email, token } = params;
+// async function tokenChcker(params) {
+// 	const { email, token } = params;
 
-	if (!token || !email) return "param invalid";
+// 	if (!token || !email) return "param invalid";
 
-	const tokenIsValid = await prisma.user.findUnique({
-		where: {
-			userEmail: email,
-		},
-		select: {
-			token: true,
-		},
-	});
+// 	const tokenIsValid = await prisma.user.findUnique({
+// 		where: {
+// 			userEmail: email,
+// 		},
+// 		select: {
+// 			token: true,
+// 		},
+// 	});
 
-	if (!tokenIsValid) return "token invalid";
+// 	if (!tokenIsValid) return "token invalid";
 
-	const tokenIsCorrect = bcrypt.compareSync(token, tokenIsValid.token);
+// 	const tokenIsCorrect = bcrypt.compareSync(token, tokenIsValid.token);
 
-	if (!tokenIsCorrect) return "incorrect token";
+// 	if (!tokenIsCorrect) return "incorrect token";
 
-	return "next";
-}
+// 	return "next";
+// }
 
 router.post("/profile", async (req, res) => {
 	const { email } = req.body;
-	const token = req.headers.authorization;
+	// const token = req.headers.authorization;
 
-	const checkToken = await tokenChcker({ email, token });
+	// const checkToken = await tokenChcker({ email, token });
 
-	if (checkToken !== "next")
-		return res.status(401).send({ message: checkToken });
+	// if (checkToken !== "next")
+	// 	return res.status(401).send({ message: checkToken });
 
 	const checkProfile = await prisma.profile.findUnique({
 		where: {
@@ -101,12 +101,12 @@ router.post("/profile", async (req, res) => {
 
 router.post("/profile/add", async (req, res) => {
 	const { id, address, gender, phone, email } = req.body;
-	const token = req.headers.authorization;
+	// const token = req.headers.authorization;
 
-	const checkToken = await tokenChcker({ email, token });
+	// const checkToken = await tokenChcker({ email, token });
 
-	if (checkToken !== "next")
-		return res.status(401).send({ message: checkToken });
+	// if (checkToken !== "next")
+	// 	return res.status(401).send({ message: checkToken });
 
 	if (gender !== "MALE" && gender !== "FEMALE") {
 		res.send({ message: "Invalid gender: " + gender });

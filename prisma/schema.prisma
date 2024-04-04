@@ -19,16 +19,17 @@ datasource db {
 }
 
 model User {
-  userId    Int      @id @default(autoincrement())
-  userEmail String   @unique
-  name      String
-  password  String
-  profile   Profile?
+  userId       String   @id @default(cuid())
+  userEmail    String   @unique
+  name         String
+  password     String
+  token        String?
+  refreshToken String?
+  profile      Profile?
 }
 
 model Profile {
-  // change to cuid in the future
-  profileID    Int    @id
+  profileID    String @id @default(cuid())
   profileEmail String @unique
   userEmail    User   @relation(fields: [profileEmail], references: [userEmail])
   phone        String
@@ -38,7 +39,7 @@ model Profile {
 }
 
 model Cart {
-  cartID     Int          @id @default(autoincrement())
+  cartID     String       @id @default(cuid())
   cartOwner  Profile      @relation(fields: [cartID], references: [profileID])
   itemDetail ItemDetail[]
 }
@@ -118,7 +119,7 @@ model ItemDetail {
   itemListID    ItemList     @relation(fields: [id], references: [id])
   // The list of comments of this item
   ItemComment   ItemComment?
-  cartID        Int?
+  cartID        String?
   Cart          Cart?        @relation(fields: [cartID], references: [cartID])
 }
 
