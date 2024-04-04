@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 function generateAccessToken(param) {
-	return jwt.sign(param, process.env.TOKEN_SECRET, { expiresIn: "1m" });
+	return jwt.sign(param, process.env.TOKEN_SECRET, { expiresIn: "1d" });
 }
 
 function checkUserToken(param) {
