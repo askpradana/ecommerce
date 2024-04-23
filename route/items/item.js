@@ -55,16 +55,47 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-router.get("/", async function (req, res) {
-	const items = await prisma.itemList.findMany();
-	res.status(200).send(items);
+// TODO
+// perhatiin item.js ini, ada yang kena problem itemdetail itemlsit merge ngga?
+// kalau aman ya tinggal npx prisma db push
+
+router.get("/all", async function (req, res) {
+	const items = await prisma.itemDetail.findMany({
+		select: {
+			id: true,
+			name: true,
+			image: true,
+			rating: true,
+			sold: true,
+			itemCategory: true,
+			price: true,
+			storeLocation: true,
+			storeName: true,
+			// description: true // * Doesnt need description on list all
+		},
+	});
+	if (items.length == 0) {
+		res.status(404).send({ message: "No item found" });
+		return;
+	} else {
+		res.status(200).send(items);
+	}
 });
 
 router.post("/add", async function (req, res) {
-	const { name, category, image, price, storeLocation, storeName } = req.body;
-	const item = await prisma.itemList.create({
+	const {
+		name,
+		category,
+		description,
+		image,
+		price,
+		storeLocation,
+		storeName,
+	} = req.body;
+	await prisma.itemDetail.create({
 		data: {
 			name,
+			description,
 			image,
 			rating: 0,
 			sold: 0,
@@ -74,7 +105,29 @@ router.post("/add", async function (req, res) {
 			storeName,
 		},
 	});
-	res.status(201).send(item);
+	res.status(201).send({ message: "Success add item" });
+});
+
+router.post("/detail", async function (req, res) {
+	const { id } = req.body;
+	const item = await prisma.itemDetail.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			id: true,
+			name: true,
+			image: true,
+			rating: true,
+			sold: true,
+			itemCategory: true,
+			price: true,
+			storeLocation: true,
+			storeName: true,
+			description: true,
+		},
+	});
+	res.send({ item });
 });
 
 module.exports = router;
