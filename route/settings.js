@@ -72,11 +72,18 @@ router.post("/profile", async (req, res) => {
 		where: {
 			profileEmail: email,
 		},
+		select: {
+			profileID: false,
+			profileEmail: true,
+			address: true,
+			gender: true,
+			phone: true,
+		},
 	});
 
 	if (!checkProfile) return res.send({ message: "profile not available" });
 
-	return res.send({ message: "to homepage" });
+	return res.send(checkProfile);
 });
 
 router.post("/profile/add", async (req, res) => {
