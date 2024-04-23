@@ -12,7 +12,7 @@ const tokenChecker = async function (req, res, next) {
 	const token = req.headers.authorization;
 
 	if (!token || !email)
-		return res.status(400).send({ message: "bad request, check your param" });
+		return res.status(400).send({ message: "Please Provide token and email" });
 
 	const tokenIsValid = await prisma.user.findUnique({
 		where: {
