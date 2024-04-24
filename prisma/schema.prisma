@@ -35,13 +35,13 @@ model Profile {
   phone        String
   gender       Gender
   address      String
-  Cart         Cart[]
+  Cart         Cart?
 }
 
 model Cart {
-  cartID     String       @id @default(cuid())
-  cartOwner  Profile      @relation(fields: [cartID], references: [profileID])
-  itemDetail ItemDetail[]
+  cartOwner  String       @id @unique
+  cartID     Profile      @relation(fields: [cartOwner], references: [profileEmail])
+  itemInCart ItemDetail[] // m2m relation with itemDetail, cart can have many item
 }
 
 model KategoriList {
@@ -63,8 +63,7 @@ model ItemDetail {
   itemCategory  String
   category      KategoriList @relation(fields: [itemCategory], references: [name])
   ItemComment   ItemComment?
-  cartID        String?
-  Cart          Cart?        @relation(fields: [cartID], references: [cartID])
+  Cart          Cart[] // m2m relation with cart, item can belongs to many cart
 }
 
 model ItemComment {

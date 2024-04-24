@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 var morgan = require("morgan");
 var authRoute = require("./route/auth");
+var cartRoute = require("./route/items/cart");
 var settingsRoute = require("./route/settings");
 var categoryRoute = require("./route/items/category");
 var itemRoute = require("./route/items/item");
@@ -25,6 +26,7 @@ app.use("/protected", tokenChecker);
 // Route
 app.use("/auth", authRoute);
 app.use("/protected/settings", settingsRoute);
+app.use("/protected/cart", cartRoute);
 app.use("/categories", categoryRoute);
 app.use("/items", itemRoute);
 
