@@ -24,6 +24,9 @@ app.use(
 app.use("/protected", tokenChecker);
 
 // Route
+app.get("/", (req, res) => {
+	return res.send("Hello World!");
+});
 app.use("/auth", authRoute);
 app.use("/protected/settings", settingsRoute);
 app.use("/protected/cart", cartRoute);
