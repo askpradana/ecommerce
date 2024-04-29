@@ -1,4 +1,8 @@
 const swaggerJsDoc = require("swagger-jsdoc");
+const dotenv = require("dotenv");
+dotenv.config();
+const url = process.env.SWAGGERURL;
+const port = process.env.PORT;
 
 const options = {
 	definition: {
@@ -19,7 +23,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "http://localhost:8080",
+				url: "http://localhost:" + port,
 			},
 		],
 	},
