@@ -17,11 +17,6 @@ var tokenChecker = require("./config/middleware");
 // config
 app.use(bodyParser.json());
 app.use(morgan("dev"));
-app.use(
-	"/api-docs",
-	swaggerUi.serve,
-	swaggerUi.setup(swaggerConfig, { explorer: true })
-);
 // * CORS
 app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -31,6 +26,11 @@ app.use(function (req, res, next) {
 	);
 	next();
 });
+app.use(
+	"/api-docs",
+	swaggerUi.serve,
+	swaggerUi.setup(swaggerConfig, { explorer: true })
+);
 
 app.use("/protected", tokenChecker);
 
