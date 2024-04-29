@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
-const port = 8080;
+const dotenv = require("dotenv");
+dotenv.config();
+const port = process.env.PORT || 8001;
 const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 var morgan = require("morgan");
